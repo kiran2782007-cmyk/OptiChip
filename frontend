@@ -1,0 +1,252 @@
+import streamlit as st
+
+# Page settings
+st.set_page_config(
+    page_title="OptiChip AI",
+    page_icon="🔬",
+    layout="wide"
+)
+
+# Title
+st.title("🔬 OptiChip AI")
+st.caption("Intelligent PCB Defect Inspection System")
+
+st.divider()
+
+# Sidebar
+with st.sidebar:
+    st.header("OptiChip AI")
+    st.caption("PCB Inspection System")
+
+    st.divider()
+
+    st.subheader("Navigation")
+
+    page = st.radio(
+        "Select Page",
+        [
+            "📊 Dashboard",
+            "🔍 Inspection",
+            "📁 Upload PCB",
+            "📈 Analytics",
+            "⚙️ Settings"
+        ]
+    )
+
+    st.divider()
+
+    st.subheader("System Status")
+    st.success("● System Online")
+    st.info("YOLOv8 Backend: Pending")
+
+
+# ==============================
+# DASHBOARD
+# ==============================
+
+if page == "📊 Dashboard":
+
+    st.header("Inspection Dashboard")
+    st.caption("Real-time overview of PCB inspection performance")
+
+    # Statistics
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("PCBs Inspected", "147")
+
+    with col2:
+        st.metric("Defects Detected", "3")
+
+    with col3:
+        st.metric("Average Confidence", "94.2%")
+
+    with col4:
+        st.metric("Processing Speed", "28 FPS")
+
+    st.divider()
+
+    # Main inspection area
+    left, right = st.columns([2, 1])
+
+    with left:
+        st.subheader("📷 Live PCB Inspection")
+
+        st.info(
+            "PCB camera feed will appear here when OpenCV + YOLOv8 are connected."
+        )
+
+        st.write("### Camera Feed")
+        st.empty()
+
+    with right:
+        st.subheader("⚠️ Inspection Status")
+
+        st.error("DEFECT DETECTED")
+
+        st.write("**Confidence:** 94.2%")
+        st.write("**Defects:** 3")
+
+        st.write("### Detected Issues")
+
+        st.write("🔴 Missing Component — R102")
+        st.write("🟠 Solder Defect — C204")
+        st.write("🟠 Misalignment — U12")
+
+
+# ==============================
+# INSPECTION
+# ==============================
+
+elif page == "🔍 Inspection":
+
+    st.header("🔍 PCB Inspection")
+    st.caption("Upload a PCB image and inspect it for component defects.")
+
+    st.divider()
+
+    # Upload PCB
+    uploaded_file = st.file_uploader(
+        "📁 Upload PCB Image",
+        type=["jpg", "jpeg", "png"]
+    )
+
+    if uploaded_file:
+
+        st.subheader("PCB Preview")
+
+        st.image(
+            uploaded_file,
+            caption="Uploaded PCB",
+            use_container_width=True
+        )
+
+        st.divider()
+
+        # Start inspection button
+        if st.button("🔍 Start Inspection", use_container_width=True):
+
+            st.success("Inspection completed successfully!")
+
+            st.divider()
+
+            # Mock inspection results
+            st.subheader("Inspection Results")
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                st.metric(
+                    "Components Inspected",
+                    "147"
+                )
+
+            with col2:
+                st.metric(
+                    "Defects Detected",
+                    "3"
+                )
+
+            with col3:
+                st.metric(
+                    "Confidence",
+                    "94.2%"
+                )
+
+            st.divider()
+
+            st.subheader("⚠️ Detected Defects")
+
+            st.error(
+                "🔴 Missing Component — R102 | Confidence: 96.3%"
+            )
+
+            st.warning(
+                "🟠 Solder Defect — C204 | Confidence: 91.8%"
+            )
+
+            st.warning(
+                "🟠 Misalignment — U12 | Confidence: 89.7%"
+            )
+
+            st.info(
+                "ℹ️ These are mock results. YOLOv8 detection will be connected here later."
+            )
+
+    else:
+
+        st.info(
+            "👆 Upload a PCB image above to begin inspection."
+        )
+
+
+# ==============================
+# UPLOAD
+# ==============================
+
+elif page == "📁 Upload PCB":
+
+    st.header("📁 Upload PCB")
+
+    uploaded_file = st.file_uploader(
+        "Choose a PCB image",
+        type=["jpg", "jpeg", "png"]
+    )
+
+    if uploaded_file:
+
+        st.image(
+            uploaded_file,
+            caption="PCB Image",
+            use_container_width=True
+        )
+
+        st.success("PCB image uploaded successfully!")
+
+
+# ==============================
+# ANALYTICS
+# ==============================
+
+elif page == "📈 Analytics":
+
+    st.header("📈 Analytics")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric("Total Inspections", "147")
+
+    with col2:
+        st.metric("Defect Rate", "2.04%")
+
+    with col3:
+        st.metric("Average Confidence", "94.2%")
+
+
+# ==============================
+# SETTINGS
+# ==============================
+
+elif page == "⚙️ Settings":
+
+    st.header("⚙️ Settings")
+
+    st.checkbox(
+        "Enable real-time inspection",
+        value=True
+    )
+
+    st.checkbox(
+        "Show detection confidence",
+        value=True
+    )
+
+    st.checkbox(
+        "Show FPS",
+        value=True
+    )
+
+    st.info(
+        "YOLOv8 configuration will be added later."
+    )
