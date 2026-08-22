@@ -1,0 +1,236 @@
+from ultralytics import YOLO
+
+
+class PCBDetector:
+
+    def __init__(self, model_path="yolov8n.pt"):
+        print("Loading YOLO model...")
+        self.model = YOLO(model_path)
+        print("YOLO model loaded!")
+
+    def detect(self, frame):
+        results = self.model(
+            frame,
+            conf=0.40,
+            verbose=False
+        )
+
+        return results
+        import cv2
+import numpy as np
+
+# ============================================================
+# OPTICHIP - STEP 4
+# ORB ALIGNMENT + PCB MASK
+# ============================================================
+
+GOLDEN = "data/golden/golden.jpg"
+TEST = "data/test/test.jpg"
+
+ALIGNED = "data/test/aligned_test.jpg"
+PCB_MASK = "data/test/pcb_mask.png"
+
+
+# ============================================================
+# 1. LOAD IMAGES
+# ============================================================
+
+golden = cv2.imread(GOLDEN)
+test = cv2.imread(TEST)
+
+if golden is None:
+    print("ERROR: GOLDEN IMAGE NOT FOUND")
+    print(GOLDEN)
+    exit()
+
+if test is None:
+    print("ERROR: TEST IMAGE NOT FOUND")
+    print(TEST)
+    exit()
+
+print("BOTH IMAGES LOADED")
+print("Golden image size:", golden.shape)
+print("Test image size:", test.shape)
+
+
+# ============================================================
+# 2. RESIZE TEST IMAGE
+# ============================================================
+
+test = cv2.resize(
+    test,
+    (golden.shape[1], golden.shape[0])
+)
+
+
+# ============================================================
+# 3. CONVERT TO GRAYSCALE
+# ============================================================
+
+g1 = cv2.cvtColor(
+    golden,
+    cv2.COLOR_BGR2GRAY
+)
+
+g2 = cv2.cvtColor(
+    test,
+    cv2.COLOR_BGR2GRAY
+)
+
+
+# ============================================================
+# 4. ORB FEATURE DETECTION
+# ============================================================
+
+orb = cv2.ORB_create(
+    nfeatures=2000
+)
+
+kp1, des1 = orb.detectAndCompute(
+    g1,
+    None
+)
+
+kp2, des2 = orb.detectAndCompute(
+    g2,
+    None
+)
+
+print("Golden features:", len(kp1))
+print("Test features:", len(kp2))
+
+
+if des1 is None or des2 is None:
+    print("NOT ENOUGH FEATURES")
+    exit()
+
+
+# ============================================================
+# 5. FEATURE MATCHING
+# ============================================================
+
+matcher = cv2.BFMatcher(
+    cv2.NORM_HAMMING,
+    crossCheck=True
+)
+
+matches = matcher.match(
+    des1,
+    des2
+)
+
+matches = sorted(
+    matches,
+    key=lambda x: x.distance
+)
+
+# Use best 100 matches
+good = matches[:100]
+
+print("Feature matches:", len(good))
+
+
+if len(good) < 10:
+    print("NOT ENOUGH MATCHES")
+    exit()
+
+
+# ============================================================
+# 6. CREATE MATCHING POINTS
+# ============================================================
+
+src = np.float32([
+    kp2[m.trainIdx].pt
+    for m in good
+]).reshape(-1, 1, 2)
+
+dst = np.float32([
+    kp1[m.queryIdx].pt
+    for m in good
+]).reshape(-1, 1, 2)
+
+
+# ============================================================
+# 7. HOMOGRAPHY
+# ============================================================
+
+H, status = cv2.findHomography(
+    src,
+    dst,
+    cv2.RANSAC,
+    5.0
+)
+
+if H is None:
+    print("ALIGNMENT FAILED")
+    exit()
+
+
+# ============================================================
+# 8. ALIGN TEST IMAGE
+# ============================================================
+
+height, width = golden.shape[:2]
+
+aligned = cv2.warpPerspective(
+    test,
+    H,
+    (width, height)
+)
+
+cv2.imwrite(
+    ALIGNED,
+    aligned
+)
+
+print("ALIGNMENT SUCCESSFUL")
+print("Aligned image saved successfully")
+
+
+# ============================================================
+# 9. CREATE PCB-ONLY MASK
+# ============================================================
+
+mask = np.zeros(
+    (height, width),
+    dtype=np.uint8
+)
+
+
+# Approximate PCB boundary
+# Based on your golden image
+
+points = np.array([
+    [55, 325],
+    [620, 325],
+    [620, 1030],
+    [55, 1030]
+], dtype=np.int32)
+
+
+cv2.fillPoly(
+    mask,
+    [points],
+    255
+)
+
+
+# ============================================================
+# 10. SAVE PCB MASK
+# ============================================================
+
+cv2.imwrite(
+    PCB_MASK,
+    mask
+)
+
+print("PCB MASK CREATED")
+print("PCB mask saved successfully")
+
+print()
+print("================================")
+print("OPTICHIP STEP 4")
+print("================================")
+print("Alignment: SUCCESSFUL")
+print("PCB mask: CREATED")
+print("Next step: Golden difference")
