@@ -3,12 +3,12 @@ import streamlit as st
 # Page settings
 st.set_page_config(
     page_title="OptiChip AI",
-    page_icon="🔬",
+    page_icon="",
     layout="wide"
 )
 
 # Title
-st.title("🔬 OptiChip AI")
+st.title("OptiChip AI")
 st.caption("Intelligent PCB Defect Inspection System")
 
 st.divider()
@@ -25,18 +25,18 @@ with st.sidebar:
     page = st.radio(
         "Select Page",
         [
-            "📊 Dashboard",
-            "🔍 Inspection",
-            "📁 Upload PCB",
-            "📈 Analytics",
-            "⚙️ Settings"
+            "Dashboard",
+            "Inspection",
+            "Upload PCB",
+            "Analytics",
+            "Settings"
         ]
     )
 
     st.divider()
 
     st.subheader("System Status")
-    st.success("● System Online")
+    st.success("System Online")
     st.info("YOLOv8 Backend: Pending")
 
 
@@ -44,7 +44,7 @@ with st.sidebar:
 # DASHBOARD
 # ==============================
 
-if page == "📊 Dashboard":
+if page == "Dashboard":
 
     st.header("Inspection Dashboard")
     st.caption("Real-time overview of PCB inspection performance")
@@ -70,7 +70,7 @@ if page == "📊 Dashboard":
     left, right = st.columns([2, 1])
 
     with left:
-        st.subheader("📷 Live PCB Inspection")
+        st.subheader("Live PCB Inspection")
 
         st.info(
             "PCB camera feed will appear here when OpenCV + YOLOv8 are connected."
@@ -80,7 +80,7 @@ if page == "📊 Dashboard":
         st.empty()
 
     with right:
-        st.subheader("⚠️ Inspection Status")
+        st.subheader("Inspection Status")
 
         st.error("DEFECT DETECTED")
 
@@ -89,25 +89,25 @@ if page == "📊 Dashboard":
 
         st.write("### Detected Issues")
 
-        st.write("🔴 Missing Component — R102")
-        st.write("🟠 Solder Defect — C204")
-        st.write("🟠 Misalignment — U12")
+        st.write("Missing Component — R102")
+        st.write("Solder Defect — C204")
+        st.write("Misalignment — U12")
 
 
 # ==============================
 # INSPECTION
 # ==============================
 
-elif page == "🔍 Inspection":
+elif page == "Inspection":
 
-    st.header("🔍 PCB Inspection")
+    st.header("PCB Inspection")
     st.caption("Upload a PCB image and inspect it for component defects.")
 
     st.divider()
 
     # Upload PCB
     uploaded_file = st.file_uploader(
-        "📁 Upload PCB Image",
+        "Upload PCB Image",
         type=["jpg", "jpeg", "png"]
     )
 
@@ -124,7 +124,7 @@ elif page == "🔍 Inspection":
         st.divider()
 
         # Start inspection button
-        if st.button("🔍 Start Inspection", use_container_width=True):
+        if st.button("Start Inspection", use_container_width=True):
 
             st.success("Inspection completed successfully!")
 
@@ -155,28 +155,28 @@ elif page == "🔍 Inspection":
 
             st.divider()
 
-            st.subheader("⚠️ Detected Defects")
+            st.subheader("Detected Defects")
 
             st.error(
-                "🔴 Missing Component — R102 | Confidence: 96.3%"
+                "Missing Component — R102 | Confidence: 96.3%"
             )
 
             st.warning(
-                "🟠 Solder Defect — C204 | Confidence: 91.8%"
+                "Solder Defect — C204 | Confidence: 91.8%"
             )
 
             st.warning(
-                "🟠 Misalignment — U12 | Confidence: 89.7%"
+                "Misalignment — U12 | Confidence: 89.7%"
             )
 
             st.info(
-                "ℹ️ These are mock results. YOLOv8 detection will be connected here later."
+                "These are mock results. YOLOv8 detection will be connected here later."
             )
 
     else:
 
         st.info(
-            "👆 Upload a PCB image above to begin inspection."
+            "Upload a PCB image above to begin inspection."
         )
 
 
@@ -184,9 +184,9 @@ elif page == "🔍 Inspection":
 # UPLOAD
 # ==============================
 
-elif page == "📁 Upload PCB":
+elif page == "Upload PCB":
 
-    st.header("📁 Upload PCB")
+    st.header("Upload PCB")
 
     uploaded_file = st.file_uploader(
         "Choose a PCB image",
@@ -208,9 +208,9 @@ elif page == "📁 Upload PCB":
 # ANALYTICS
 # ==============================
 
-elif page == "📈 Analytics":
+elif page == "Analytics":
 
-    st.header("📈 Analytics")
+    st.header("Analytics")
 
     col1, col2, col3 = st.columns(3)
 
@@ -228,9 +228,9 @@ elif page == "📈 Analytics":
 # SETTINGS
 # ==============================
 
-elif page == "⚙️ Settings":
+elif page == "Settings":
 
-    st.header("⚙️ Settings")
+    st.header("Settings")
 
     st.checkbox(
         "Enable real-time inspection",
